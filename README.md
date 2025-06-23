@@ -435,3 +435,140 @@ Secure session handling with automatic timeout, secure cookie flags, and CSRF to
 ### **Security Monitoring & Logging**
 
 Comprehensive logging of security events, failed authentication attempts, and suspicious activities with real-time monitoring. Automated alerts for potential security breaches and audit trails for compliance. This enables rapid incident response, helps identify attack patterns, and provides forensic capabilities for security investigations.
+
+## CI/CD Pipeline
+
+### What is CI/CD?
+
+**Continuous Integration (CI)** and **Continuous Deployment (CD)** are software development practices that enable teams to deliver code changes more frequently and reliably. CI/CD pipelines automate the process of testing, building, and deploying applications, ensuring that code changes are consistently validated and deployed without manual intervention.
+
+**Continuous Integration (CI)** involves:
+- Automatically building and testing code changes when they are committed to the repository
+- Running automated tests to catch bugs early in the development process
+- Ensuring code quality through linting, formatting, and security checks
+- Validating that new changes don't break existing functionality
+
+**Continuous Deployment (CD)** involves:
+- Automatically deploying validated code changes to staging and production environments
+- Managing infrastructure as code to ensure consistent deployments
+- Rolling back deployments quickly if issues are detected
+- Monitoring application performance and health post-deployment
+
+### Why CI/CD is Important for This Project
+
+For the AirBnB Clone backend, CI/CD pipelines are crucial because:
+
+1. **Quality Assurance**: With multiple API endpoints and complex business logic for bookings, payments, and user management, automated testing ensures that changes don't introduce regressions
+
+2. **Rapid Development**: Multiple team members (Backend Developer, Database Administrator, DevOps Engineer, QA Engineer) can work simultaneously while maintaining code integrity
+
+3. **Database Safety**: Automated migration testing prevents database corruption in production environments where user data and booking information are critical
+
+4. **Security**: Payment processing and user authentication require rigorous security testing that can be automated through CI/CD
+
+5. **Scalability**: As the platform grows, automated deployment ensures consistent scaling across multiple environments
+
+6. **Reliability**: For a booking platform where downtime means lost revenue, automated deployment reduces human error and deployment time
+
+### CI/CD Tools and Implementation
+
+#### Primary Tools
+
+**GitHub Actions**
+- **Why**: Native integration with GitHub repositories, excellent for Python/Django projects
+- **Usage**: Automated testing on pull requests, deployment to staging/production
+- **Configuration**: `.github/workflows/` directory with YAML workflow files
+
+**Docker**
+- **Why**: Ensures consistent environments across development, testing, and production
+- **Usage**: Containerize the Django application, PostgreSQL, Redis, and Celery workers
+- **Benefits**: Eliminates "it works on my machine" problems
+
+**Additional Tools**
+
+**pytest & Coverage.py**
+- Automated unit and integration testing for Django models, views, and API endpoints
+- Code coverage reporting to ensure comprehensive testing
+
+**Black & flake8**
+- Code formatting and linting to maintain consistent code style
+- Automated code quality checks in CI pipeline
+
+**Django Check & Safety**
+- Security vulnerability scanning
+- Django configuration validation
+
+**Terraform or AWS CloudFormation**
+- Infrastructure as Code (IaC) for consistent environment provisioning
+- Automated database and Redis instance management
+
+#### Pipeline Stages
+
+**1. Code Quality & Testing Stage**
+```yaml
+- Lint code with flake8
+- Format check with Black
+- Run security checks with Safety
+- Execute unit tests with pytest
+- Generate coverage reports
+- Test database migrations
+```
+
+**2. Build & Package Stage**
+```yaml
+- Build Docker images for Django app, Celery workers
+- Tag images with commit SHA and branch name
+- Push images to container registry (Docker Hub/AWS ECR)
+- Cache dependencies for faster builds
+```
+
+**3. Deployment Stage**
+```yaml
+- Deploy to staging environment automatically on main branch
+- Run integration tests against staging
+- Deploy to production with manual approval
+- Health checks and rollback capability
+```
+
+#### Example Workflow Structure
+
+```yaml
+# .github/workflows/ci-cd.yml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Docker image
+      - name: Push to registry
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to staging
+      - name: Run health checks
+      - name: Deploy to production (manual approval)
+```
