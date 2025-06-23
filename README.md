@@ -377,3 +377,199 @@ Bookings (1) ←→ (1) Reviews [booking_id]
 - **Caching**: Redis-based caching for frequently accessed data
 - **Async Processing**: Celery for background tasks
 - **Query Optimization**: Efficient database queries and prefetching
+
+## 🔧 Feature Breakdown
+
+### **User Management**
+Implements secure user registration, authentication, and profile management for both guests and hosts. Users can create accounts, verify their identity, and maintain detailed profiles with preferences and booking history. This foundation enables personalized experiences and trust-building between platform participants.
+
+### **Property Management**
+Allows hosts to create, update, and manage their property listings with detailed descriptions, pricing, and availability. Properties include comprehensive information such as location, amenities, photos, and house rules. This feature serves as the core inventory system that drives the entire rental marketplace.
+
+### **Booking System**
+Enables guests to search, reserve, and manage property bookings with flexible date selection and guest capacity options. The system handles booking confirmations, modifications, and cancellations while preventing double-bookings. This critical feature facilitates the core transaction between guests and hosts.
+
+### **Payment Processing**
+Integrates secure payment handling for booking transactions, including payment capture, processing, and refund management. Supports multiple payment methods and maintains detailed transaction records for financial tracking. This feature ensures safe and reliable monetary exchanges between users.
+
+### **Review System**
+Allows guests to leave ratings and detailed reviews for properties and hosts after completed stays. Features multi-dimensional ratings for cleanliness, accuracy, location, and overall experience. This system builds trust and helps future guests make informed booking decisions.
+
+### **Search & Discovery**
+Provides advanced property search functionality with filters for location, dates, price range, amenities, and property type. Includes map-based browsing and intelligent recommendations based on user preferences. This feature helps guests efficiently find properties that match their specific needs.
+
+Our AirBnB Clone uses a relational database design optimized for a rental platform. The database structure supports complex relationships between users, properties, bookings, and transactions while maintaining data integrity and performance.
+
+### **Core Entities & Relationships**
+
+#### **Users**
+**Purpose**: Stores information about platform users (both guests and hosts)
+
+**Key Fields**:
+- `user_id` (Primary Key): Unique identifier for each user
+- `email` (Unique): User's email address for authentication and communication
+- `first_name` & `last_name`: User's full name for personalization
+- `phone_number`: Contact information for booking confirmations
+- `is_host` (Boolean): Indicates if user can list properties
+- `date_joined`: Account creation timestamp
+- `is_verified` (Boolean): Email/phone verification status
+
+**Relationships**:
+- **One-to-Many** with Properties (as host): A user can own/manage multiple properties
+- **One-to-Many** with Bookings (as guest): A user can make multiple bookings
+- **One-to-Many** with Reviews (as reviewer): A user can write multiple reviews
+- **One-to-Many** with Payments: A user can have multiple payment records
+
+---
+
+#### **Properties**
+**Purpose**: Stores detailed information about rental properties listed on the platform
+
+**Key Fields**:
+- `property_id` (Primary Key): Unique identifier for each property
+- `host_id` (Foreign Key → Users): References the property owner
+- `title`: Property listing title/name
+- `description` (Text): Detailed property description
+- `address`: Full property address
+- `latitude` & `longitude`: Geographical coordinates for mapping
+- `property_type`: Type of property (apartment, house, villa, etc.)
+- `max_guests` (Integer): Maximum occupancy capacity
+- `bedrooms` & `bathrooms` (Integer): Room counts
+- `price_per_night` (Decimal): Nightly rental rate
+- `is_available` (Boolean): Current availability status
+- `created_at`: Listing creation date
+
+**Relationships**:
+- **Many-to-One** with Users: Each property belongs to one host
+- **One-to-Many** with Bookings: A property can have multiple bookings
+- **One-to-Many** with Reviews: A property can receive multiple reviews
+- **One-to-Many** with PropertyImages: A property can have multiple photos
+
+---
+
+#### **Bookings**
+**Purpose**: Manages reservation data and booking lifecycle
+
+**Key Fields**:
+- `booking_id` (Primary Key): Unique booking identifier
+- `property_id` (Foreign Key → Properties): References booked property
+- `guest_id` (Foreign Key → Users): References the guest making booking
+- `check_in_date` (Date): Arrival date
+- `check_out_date` (Date): Departure date
+- `total_guests` (Integer): Number of guests for the booking
+- `total_amount` (Decimal): Total booking cost
+- `booking_status`: Current status (pending, confirmed, cancelled, completed)
+- `special_requests` (Text): Guest's special requirements
+- `created_at`: Booking creation timestamp
+- `updated_at`: Last modification timestamp
+
+**Relationships**:
+- **Many-to-One** with Properties: Each booking is for one specific property
+- **Many-to-One** with Users: Each booking belongs to one guest
+- **One-to-One** with Payments: Each booking has one associated payment
+- **One-to-One** with Reviews: Each completed booking can have one review
+
+---
+
+#### **Reviews**
+**Purpose**: Stores guest feedback and ratings for properties and hosts
+
+**Key Fields**:
+- `review_id` (Primary Key): Unique review identifier
+- `property_id` (Foreign Key → Properties): References reviewed property
+- `guest_id` (Foreign Key → Users): References guest who wrote review
+- `booking_id` (Foreign Key → Bookings): Links review to specific booking
+- `rating` (Integer): Numerical rating (1-5 stars)
+- `comment` (Text): Written review content
+- `cleanliness_rating`, `accuracy_rating`, `location_rating` (Integer): Detailed ratings
+- `created_at`: Review submission date
+- `is_published` (Boolean): Moderation status
+
+**Relationships**:
+- **Many-to-One** with Properties: Multiple reviews can be written for one property
+- **Many-to-One** with Users: One user can write multiple reviews
+- **One-to-One** with Bookings: Each review corresponds to one completed booking
+
+---
+
+#### **Payments**
+**Purpose**: Records all financial transactions and payment processing details
+
+**Key Fields**:
+- `payment_id` (Primary Key): Unique payment identifier
+- `booking_id` (Foreign Key → Bookings): References associated booking
+- `user_id` (Foreign Key → Users): References paying user
+- `amount` (Decimal): Payment amount
+- `payment_method`: Payment type (credit_card, paypal, bank_transfer)
+- `payment_status`: Transaction status (pending, completed, failed, refunded)
+- `transaction_id`: External payment processor reference
+- `payment_date`: Transaction timestamp
+- `refund_amount` (Decimal): Refunded amount if applicable
+
+**Relationships**:
+- **One-to-One** with Bookings: Each payment is linked to one booking
+- **Many-to-One** with Users: One user can have multiple payments
+
+---
+
+### **Additional Supporting Entities**
+
+#### **PropertyImages**
+**Purpose**: Stores multiple photos for each property listing
+
+**Key Fields**:
+- `image_id` (Primary Key)
+- `property_id` (Foreign Key → Properties)
+- `image_url`: File path or URL to image
+- `is_primary` (Boolean): Indicates main listing photo
+- `upload_date`: Image upload timestamp
+
+#### **PropertyAmenities**
+**Purpose**: Links properties to available amenities (WiFi, parking, pool, etc.)
+
+**Key Fields**:
+- `amenity_id` (Primary Key)
+- `property_id` (Foreign Key → Properties)
+- `amenity_name`: Name of amenity
+- `amenity_type`: Category of amenity
+
+### **Database Relationships Summary**
+
+```
+Users (1) ←→ (Many) Properties [host_id]
+Users (1) ←→ (Many) Bookings [guest_id]
+Users (1) ←→ (Many) Reviews [guest_id]
+Users (1) ←→ (Many) Payments [user_id]
+
+Properties (1) ←→ (Many) Bookings [property_id]
+Properties (1) ←→ (Many) Reviews [property_id]
+Properties (1) ←→ (Many) PropertyImages [property_id]
+
+Bookings (1) ←→ (1) Payments [booking_id]
+Bookings (1) ←→ (1) Reviews [booking_id]
+```
+
+### **Database Optimization Strategies**
+
+**Indexing**:
+- Primary keys and foreign keys (automatic)
+- Email addresses for fast user lookup
+- Property location coordinates for geographical queries
+- Booking dates for availability searches
+- Review ratings for sorting and filtering
+
+**Performance Considerations**:
+- **Composite Indexes**: On frequently queried combinations (property_id + check_in_date)
+- **Partial Indexes**: On active bookings and available properties only
+- **Database Constraints**: Ensure data integrity (check-in < check-out dates)
+- **Soft Deletes**: Mark records as deleted instead of removing for audit trails
+
+**Scalability Features**:
+- **Partitioning**: Large tables like bookings can be partitioned by date
+- **Read Replicas**: For handling high read traffic on property searches
+- **Caching Strategy**: Frequently accessed property and user data cached in Redis
+
+- **Database Indexing**: Optimized queries with strategic indexes
+- **Caching**: Redis-based caching for frequently accessed data
+- **Async Processing**: Celery for background tasks
+- **Query Optimization**: Efficient database queries and prefetching
