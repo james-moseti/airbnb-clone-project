@@ -109,3 +109,93 @@ Our AirBnB Clone project follows industry best practices for team structure, wit
 - **Collaborative Approach**: Roles complement each other for comprehensive project coverage
 - **Quality Assurance**: Multiple checkpoints ensure high-quality deliverables
 - **Scalability**: Structure allows for easy team expansion as project grows
+
+## 🛠️ Technology Stack
+
+Our AirBnB Clone backend leverages a modern, scalable technology stack designed for performance, maintainability, and developer productivity. Each technology serves a specific purpose in creating a robust rental platform.
+
+### **Backend Framework & API Development**
+
+#### **Django**
+- **Purpose**: High-level Python web framework that serves as the foundation of our backend application
+- **Role in Project**: Provides the core structure for our web application, including URL routing, request/response handling, authentication, and admin interface
+- **Benefits**: Rapid development, built-in security features, extensive ecosystem, and "batteries-included" philosophy
+- **Use Cases**: User management, property listings, booking system, and overall application architecture
+
+#### **Django REST Framework (DRF)**
+- **Purpose**: Powerful toolkit for building RESTful APIs in Django applications
+- **Role in Project**: Creates standardized API endpoints for frontend applications and mobile clients to interact with our backend
+- **Benefits**: Serialization, authentication, permissions, browsable API interface, and comprehensive documentation
+- **Use Cases**: All CRUD operations for users, properties, bookings, payments, and reviews
+
+#### **GraphQL**
+- **Purpose**: Query language and runtime for APIs that allows clients to request specific data
+- **Role in Project**: Provides flexible and efficient data fetching for complex queries, reducing over-fetching and under-fetching
+- **Benefits**: Single endpoint, type safety, real-time subscriptions, and optimized data loading
+- **Use Cases**: Complex property searches, user dashboards, and mobile app optimization
+
+### **Database & Data Management**
+
+#### **PostgreSQL**
+- **Purpose**: Advanced open-source relational database management system
+- **Role in Project**: Primary data store for all application data including users, properties, bookings, payments, and reviews
+- **Benefits**: ACID compliance, complex queries, JSON support, full-text search, and excellent performance
+- **Use Cases**: Storing structured data, complex relationships, geospatial queries for property locations, and data integrity
+
+#### **Redis**
+- **Purpose**: In-memory data structure store used as cache and message broker
+- **Role in Project**: Caching frequently accessed data and managing session storage for improved performance
+- **Benefits**: Ultra-fast data access, pub/sub messaging, and automatic data expiration
+- **Use Cases**: Session management, API response caching, property search results, and user preferences
+
+### **Asynchronous Processing**
+
+#### **Celery**
+- **Purpose**: Distributed task queue system for handling asynchronous operations
+- **Role in Project**: Processes background tasks that don't require immediate response
+- **Benefits**: Scalable task processing, retry mechanisms, and scheduled tasks
+- **Use Cases**: 
+  - Email notifications (booking confirmations, payment receipts)
+  - Payment processing
+  - Image optimization and thumbnails
+  - Data analytics and reporting
+  - Automated booking reminders
+
+### **DevOps & Infrastructure**
+
+#### **Docker**
+- **Purpose**: Containerization platform for packaging applications and dependencies
+- **Role in Project**: Ensures consistent development and deployment environments across all stages
+- **Benefits**: Environment consistency, easy scaling, isolation, and simplified deployments
+- **Use Cases**: 
+  - Development environment setup
+  - Testing in isolated containers
+  - Production deployment
+  - Microservices architecture preparation
+
+#### **CI/CD Pipelines**
+- **Purpose**: Automated workflows for continuous integration and continuous deployment
+- **Role in Project**: Automates testing, building, and deployment processes
+- **Benefits**: Faster releases, reduced human error, consistent deployments, and improved code quality
+- **Use Cases**:
+  - Automated testing on code commits
+  - Code quality checks and linting
+  - Security vulnerability scanning
+  - Automated deployment to staging and production
+  - Database migrations
+
+### **Architecture Benefits**
+
+**Scalability**: Technologies chosen support horizontal and vertical scaling as user base grows
+
+**Performance**: Redis caching and PostgreSQL optimization ensure fast response times
+
+**Reliability**: Docker containers and CI/CD pipelines provide consistent, tested deployments
+
+**Maintainability**: Django's structure and DRF's standards make the codebase easy to maintain and extend
+
+**Developer Experience**: Modern tools with excellent documentation and community support
+
+**Security**: Built-in Django security features, PostgreSQL data integrity, and containerized deployments
+
+**Future-Proof**: Technology stack supports evolution toward microservices architecture when needed
