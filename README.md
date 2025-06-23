@@ -1,4 +1,4 @@
-# AirBnB Clone Backend
+# AirBnB Clone Backend 
 
 A robust and scalable backend system for an Airbnb-like platform, built with Django and modern web technologies.
 
@@ -15,3 +15,16 @@ This backend provides a comprehensive foundation for managing user interactions,
 - **Review System**: User ratings and reviews for properties
 - **Database Optimization**: Efficient data retrieval with indexing and caching
 - **API Documentation**: OpenAPI standard documentation for easy integration
+
+## Tech Stack
+
+| Technology | Purpose |
+|------------|---------|
+| **Django** | High-level Python web framework |
+| **Django REST Framework** | RESTful API development |
+| **PostgreSQL** | Primary database |
+| **GraphQL** | Flexible data querying |
+| **Celery** | Asynchronous task processing |
+| **Redis** | Caching and session management |
+| **Docker** | Containerization |
+| **CI/CD Pipelines** | Automated testing and deployment |
